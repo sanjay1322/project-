@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Service Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef2f7;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #825e21;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    table th {
+      background: #4a00e0;
+      color: white;
+    }
+    select {
+      padding: 6px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 6px 12px;
+      background: #814de7;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #3b00b3;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin Dashboard</h1>
+  </header>
+
+  <div class="container">
+    <h2>All Student Requests</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Request ID</th>
+          <th>Student Name</th>
+          <th>Service</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Assign Department</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Example requests (later backend will load real data) -->
+        <tr>
+          <td>1</td>
+          <td>Rahul Sharma</td>
+          <td>ID Card Re-issue</td>
+          <td>Lost ID card in hostel</td>
+          <td><span style="color: orange; font-weight: bold;">Pending</span></td>
+          <td>
+            <select>
+              <option value="">-- Select Department --</option>
+              <option value="admin">Administration</option>
+              <option value="library">Library</option>
+              <option value="hostel">Hostel</option>
+              <option value="accounts">Accounts</option>
+              <option value="it">IT Support</option>
+            </select>
+            <button>Assign</button>
+          </td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Priya Verma</td>
+          <td>Library Book Renewal</td>
+          <td>Need extension for Data Structures book</td>
+          <td><span style="color: green; font-weight: bold;">Approved</span></td>
+          <td>
+            <select>
+              <option value="">-- Select Department --</option>
+              <option value="library">Library</option>
+              <option value="hostel">Hostel</option>
+              <option value="accounts">Accounts</option>
+              <option value="it">IT Support</option>
+            </select>
+            <button>Assign</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+<a href="index.html" class="back to home">← back to home</a>
+</html>

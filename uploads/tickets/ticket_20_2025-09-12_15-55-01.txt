@@ -1,0 +1,10 @@
+SERVICE REQUEST TICKET
+======================
+
+Ticket ID: #20
+Student: kalmesh
+Title: teaching issue
+Category: Other
+Description: concepts are not explained deeply and waste time
+Status: Submitted
+Date: 2025-09-12 15:55:01

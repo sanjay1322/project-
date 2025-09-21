@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | Service Tracker</title>
+  <style>
+    .back-home {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      color: #007bff;
+      transition: 0.3s;
+    }
+
+    .back-home:hover {
+      color: #ff5722;
+      text-decoration: underline;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #0072ff;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+      color: #444;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    textarea {
+      resize: none;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #0072ff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056d6;
+    }
+    .status-section {
+      margin-top: 30px;
+    }
+    .status-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    .status-table th, .status-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .status-table th {
+      background: #0072ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Welcome Student</h1>
+  </header>
+
+  <div class="container">
+    <h2>Submit a Request</h2>
+    <form action="backend/service_request.php" method="POST">
+      <input type="hidden" name="student_id" value="1"> <!-- Replace with actual logged-in student ID -->
+      <input type="hidden" name="department_id" value="1"> <!-- Replace with actual department ID -->
+      <div class="form-group">
+        <label for="service">Select Service</label>
+        <select id="service" name="service" required>
+          <option value="">-- Choose a Service --</option>
+          <option value="id_card">ID Card Re-issue</option>
+          <option value="fee_receipt">Fee Payment Receipt</option>
+          <option value="book_renewal">Library Book Renewal</option>
+          <option value="character_certificate">Character Certificate</option>
+          <option value="transfer_certificate">College Leaving / Transfer Certificate</option>
+          <option value="bonafide">Bonafide Certificate</option>
+          <option value="course_completion">Course Completion Certificate</option>
+          <option value="hostel_room">Hostel Room Allocation / Change</option>
+          <option value="mess_change">Mess Refund / Change of Mess</option>
+          <option value="maintenance">Maintenance Issues (fan, light, plumbing, etc.)</option>
+          <option value="wifi">Wi-Fi / Internet Access</option>
+          <option value="password_reset">Password Reset (ERP/College Portal)</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="4" placeholder="Enter details about your request..." required></textarea>
+      </div>
+
+      <button type="submit">Submit Request</button>
+    </form>
+
+    <div class="status-section">
+      <h2>Your Request Status</h2>
+      <table class="status-table">
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Service</th>
+            <th>Status</th>
+            <th>Department</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Later, backend will fill this table dynamically -->
+          <tr>
+            <td>1</td>
+            <td>ID Card Re-issue</td>
+            <td><span style="color: orange; font-weight: bold;">Pending</span></td>
+            <td>Administration</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Library Book Renewal</td>
+            <td><span style="color: green; font-weight: bold;">Approved</span></td>
+            <td>Library</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+<a href="index.html" class="back-home">← Back to Home</a>
+
+</html>

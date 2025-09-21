@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Tracker - Quick Start</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        .instructions {
+            margin: 20px 0;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Service Tracker Quick Start</h1>
+        
+        <div class="warning">
+            <strong>⚠️ Important:</strong> This project requires a PHP server to work properly!
+        </div>
+        
+        <div class="instructions">
+            <h3>Follow these steps:</h3>
+            <ol style="text-align: left; display: inline-block;">
+                <li>Double-click <strong>start_server.bat</strong> in this folder</li>
+                <li>Wait for the server to start (you'll see a command window)</li>
+                <li>Click the button below to open the project</li>
+            </ol>
+        </div>
+        
+        <a href="http://localhost:8000" class="btn" target="_blank">
+            🌐 Open Service Tracker
+        </a>
+        
+        <div style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+            <p>If the link doesn't work, make sure you've started the server first!</p>
+            <p>Server URL: <strong>http://localhost:8000</strong></p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-check if server is running
+        function checkServer() {
+            fetch('http://localhost:8000')
+                .then(response => {
+                    if (response.ok) {
+                        document.querySelector('.warning').innerHTML = 
+                            '<strong>✅ Server is running!</strong> You can now click the button below.';
+                        document.querySelector('.warning').style.background = 'rgba(40, 167, 69, 0.2)';
+                        document.querySelector('.warning').style.borderColor = '#28a745';
+                    }
+                })
+                .catch(() => {
+                    // Server not running - keep warning
+                });
+        }
+        
+        // Check server status every 2 seconds
+        setInterval(checkServer, 2000);
+        checkServer(); // Initial check
+    </script>
+</body>
+</html>
