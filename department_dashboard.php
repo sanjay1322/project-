@@ -175,8 +175,7 @@ try {
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php $statusNorm = strtolower(trim(preg_replace('/\s+/u',' ', $ticket['status']))); ?>
-                                                    <?php if (in_array($statusNorm, ['assigned', 'under review'])): ?>
+                                                    <?php if (in_array($ticket['status'], ['Assigned', 'Under Review'])): ?>
                                                         <button class="btn btn-sm btn-success me-1" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'approve')">Approve</button>
                                                         <button class="btn btn-sm btn-danger me-1" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'reject')">Reject</button>
                                                         <button class="btn btn-sm btn-info" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'under_review')">Review</button>
