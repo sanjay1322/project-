@@ -127,6 +127,7 @@ try {
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="text-primary">Admin Dashboard</h2>
+            <p style="color:red;font-weight:bold;">DEBUG: THIS IS THE NEW FILE</p>
             <div>
                 <a href="create_department_user.php" class="btn btn-info me-2">
                     <i class="bi bi-person-plus"></i> Create Department User
@@ -209,7 +210,7 @@ try {
                                                 <td><?php echo htmlspecialchars($ticket['title']); ?></td>
                                                 <td><?php echo htmlspecialchars($ticket['category']); ?></td>
                                                 <td>
-                                                    <span class="badge status-<?php echo strtolower($ticket['status']); ?>">
+                                                    <span class="badge status-<?php echo strtolower(str_replace(' ', '-', trim($ticket['status']))); ?>">
                                                         <?php echo $ticket['status']; ?>
                                                     </span>
                                                 </td>
@@ -225,22 +226,18 @@ try {
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if ($ticket['status'] === 'Submitted'): ?>
-                                                        <form method="POST" class="d-inline">
-                                                            <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
-                                                            <select name="department_id" class="form-select form-select-sm d-inline-block" style="width: auto;">
-                                                                <option value="">Select Department</option>
-                                                                <?php foreach ($departments as $dept): ?>
-                                                                    <option value="<?php echo $dept['id']; ?>">
-                                                                        <?php echo htmlspecialchars($dept['name']); ?>
-                                                                    </option>
-                                                                <?php endforeach; ?>
-                                                            </select>
-                                                            <button type="submit" name="assign_ticket" class="btn btn-sm btn-primary ms-1">Assign</button>
-                                                        </form>
-                                                    <?php else: ?>
-                                                        <span class="text-muted">-</span>
-                                                    <?php endif; ?>
+                                                    <form method="POST" class="d-inline">
+                                                        <input type="hidden" name="ticket_id" value="<?php echo $ticket['id']; ?>">
+                                                        <select name="department_id" class="form-select form-select-sm d-inline-block" style="width: auto;">
+                                                            <option value="">Select Department</option>
+                                                            <?php foreach ($departments as $dept): ?>
+                                                                <option value="<?php echo $dept['id']; ?>">
+                                                                    <?php echo htmlspecialchars($dept['name']); ?>
+                                                                </option>
+                                                            <?php endforeach; ?>
+                                                        </select>
+                                                        <button type="submit" name="assign_ticket" class="btn btn-sm btn-primary ms-1">Assign</button>
+                                                    </form>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>

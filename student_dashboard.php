@@ -15,55 +15,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_ticket'])) {
     $category = sanitizeInput($_POST['category'] ?? '');
     $description = sanitizeInput($_POST['description'] ?? '');
 
-    if (!$title || !$category || !$description) {
-        $error = 'All fields are required.';
+    if (empty($title) || empty($category) || empty($description)) {
+        $error = 'Please fill in all fields.';
     } else {
         try {
-            // Insert ticket
+            // Step 1: Insert the ticket with a 'Submitted' status
             $stmt = $pdo->prepare('INSERT INTO tickets (student_id, title, category, description, status) VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$user['id'], $title, $category, $description, 'Submitted']);
-
-            // Get the ticket ID
             $ticketId = $pdo->lastInsertId();
-            
-            // Log status change
+
+            // Step 2: Create a dummy file path to make the download button appear
+            // The actual PDF is generated on-the-fly by download_pdf.php
+            $dummyFilePath = 'uploads/ticket_' . $ticketId . '.pdf';
+
+            // Step 3: Update the ticket with the dummy file path
+            $stmt = $pdo->prepare('UPDATE tickets SET pdf_path = ? WHERE id = ?');
+            $stmt->execute([$dummyFilePath, $ticketId]);
+
+            // Step 4: Log the creation in ticket_history
             $stmt = $pdo->prepare('INSERT INTO ticket_history (ticket_id, changed_by, old_status, new_status, comment) VALUES (?, ?, ?, ?, ?)');
             $stmt->execute([$ticketId, $user['id'], null, 'Submitted', 'Ticket submitted by student']);
 
-            // Simple PDF generation without external dependencies
-            $uploadDir = 'uploads/tickets/';
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $filename = 'ticket_' . $ticketId . '_' . date('Y-m-d_H-i-s') . '.txt';
-            $filepath = $uploadDir . $filename;
-            
-            $pdfContent = "SERVICE REQUEST TICKET\n";
-            $pdfContent .= "======================\n\n";
-            $pdfContent .= "Ticket ID: #" . $ticketId . "\n";
-            $pdfContent .= "Student: " . $user['name'] . "\n";
-            $pdfContent .= "Title: " . $title . "\n";
-            $pdfContent .= "Category: " . $category . "\n";
-            $pdfContent .= "Description: " . $description . "\n";
-            $pdfContent .= "Status: Submitted\n";
-            $pdfContent .= "Date: " . date('Y-m-d H:i:s') . "\n";
-            
-            file_put_contents($filepath, $pdfContent);
-            
-            // Update ticket with PDF path
-            $stmt = $pdo->prepare('UPDATE tickets SET pdf_path = ? WHERE id = ?');
-            $stmt->execute([$filepath, $ticketId]);
-
-            $success = 'Ticket submitted successfully! Reference ID: #' . $ticketId;
-            
-            // Clear form data
-            $_POST = array();
-            
+            $success = 'Request submitted successfully!';
         } catch (PDOException $e) {
-            $error = 'Database error: ' . $e->getMessage();
-        } catch (Exception $e) {
-            $error = 'System error: ' . $e->getMessage();
+            $error = 'Error submitting request: ' . $e->getMessage();
         }
     }
 }
@@ -99,6 +74,7 @@ try {
     <style>
         .status-submitted { @apply bg-yellow-400 text-black; }
         .status-assigned { @apply bg-blue-500 text-white; }
+        .status-under-review { @apply bg-purple-500 text-white; }
         .status-approved { @apply bg-green-500 text-white; }
         .status-rejected { @apply bg-red-500 text-white; }
         
@@ -266,7 +242,7 @@ try {
                                                     <?php echo htmlspecialchars($ticket['category']); ?>
                                                 </td>
                                                 <td class="px-4 py-4 whitespace-nowrap">
-                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full status-<?php echo strtolower($ticket['status']); ?>">
+                                                    <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full status-<?php echo strtolower(str_replace(' ', '-', $ticket['status'])); ?>">
                                                         <?php echo $ticket['status']; ?>
                                                     </span>
                                                 </td>

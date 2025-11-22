@@ -14,12 +14,14 @@ function hasRole($role) {
 // Check if user can access specific role pages
 function requireRole($allowedRoles) {
     if (!isLoggedIn()) {
-        header('Location: ../login.html');
+        // OLD: header('Location: ../login.html');
+        header('Location: /service_tracker/login.html');
         exit();
     }
     
     if (!in_array($_SESSION['user_role'], $allowedRoles)) {
-        header('Location: ../index.html');
+        // OLD: header('Location: ../index.html');
+        header('Location: /service_tracker/index.html');
         exit();
     }
 }
@@ -37,7 +39,8 @@ function loginUser($user) {
 // Logout user
 function logoutUser() {
     session_destroy();
-    header('Location: ../index.html');
+    // OLD: header('Location: ../index.html');
+    header('Location: /service_tracker/index.html');
     exit();
 }
 

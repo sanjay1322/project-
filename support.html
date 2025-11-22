@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support - Service Tracker</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-5">
+            <h1>Support</h1>
+            <p class="lead">How can we help you?</p>
+        </header>
+
+        <section>
+            <h2>Frequently Asked Questions</h2>
+            <div id="faq">
+                <div class="card">
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                            How do I submit a new service request?
+                        </a>
+                    </div>
+                    <div id="collapseOne" class="collapse show" data-parent="#faq">
+                        <div class="card-body">
+                            To submit a new request, log in to your account and navigate to the dashboard. Click on the "New Request" button and fill out the required details.
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
+                            How can I track the status of my request?
+                        </a>
+                    </div>
+                    <div id="collapseTwo" class="collapse" data-parent="#faq">
+                        <div class="card-body">
+                            You can view the status of all your requests on your dashboard. Each request will have a status indicator, such as "Pending," "In Progress," or "Completed."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-5">
+            <p>&copy; 2024 Service Tracker. All Rights Reserved.</p>
+            <p><a href="index.html">Back to Home</a></p>
+        </footer>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

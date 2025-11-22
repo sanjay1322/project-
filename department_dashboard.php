@@ -19,29 +19,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Invalid ticket ID.';
     } else {
         try {
+            // Get current status before making changes
+            $stmt = $pdo->prepare('SELECT status FROM tickets WHERE id = ? AND department_id = ?');
+            $stmt->execute([$ticketId, $user['department_id']]);
+            $ticket = $stmt->fetch();
+            $oldStatus = $ticket ? $ticket['status'] : 'Assigned';
+
             switch ($action) {
                 case 'approve':
-                    // Approve ticket
                     $stmt = $pdo->prepare('UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND department_id = ?');
                     $stmt->execute(['Approved', $ticketId, $user['department_id']]);
-                    
-                    // Log status change
                     $stmt = $pdo->prepare('INSERT INTO ticket_history (ticket_id, changed_by, old_status, new_status, comment) VALUES (?, ?, ?, ?, ?)');
-                    $stmt->execute([$ticketId, $user['id'], 'Assigned', 'Approved', $comment]);
-                    
+                    $stmt->execute([$ticketId, $user['id'], $oldStatus, 'Approved', $comment]);
                     $success = 'Ticket approved successfully!';
                     break;
 
                 case 'reject':
-                    // Reject ticket
                     $stmt = $pdo->prepare('UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND department_id = ?');
                     $stmt->execute(['Rejected', $ticketId, $user['department_id']]);
-                    
-                    // Log status change
                     $stmt = $pdo->prepare('INSERT INTO ticket_history (ticket_id, changed_by, old_status, new_status, comment) VALUES (?, ?, ?, ?, ?)');
-                    $stmt->execute([$ticketId, $user['id'], 'Assigned', 'Rejected', $comment]);
-                    
+                    $stmt->execute([$ticketId, $user['id'], $oldStatus, 'Rejected', $comment]);
                     $success = 'Ticket rejected!';
+                    break;
+
+                case 'under_review':
+                    $stmt = $pdo->prepare('UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND department_id = ?');
+                    $stmt->execute(['Under Review', $ticketId, $user['department_id']]);
+                    $stmt = $pdo->prepare('INSERT INTO ticket_history (ticket_id, changed_by, old_status, new_status, comment) VALUES (?, ?, ?, ?, ?)');
+                    $stmt->execute([$ticketId, $user['id'], $oldStatus, 'Under Review', $comment]);
+                    $success = 'Ticket marked as under review!';
                     break;
             }
         } catch (PDOException $e) {
@@ -52,16 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Get tickets assigned to this department
 try {
-    $stmt = $pdo->prepare('
-        SELECT 
-            t.*,
-            u.username as student_name,
-            u.email as student_email
-        FROM tickets t 
-        LEFT JOIN users u ON t.student_id = u.id 
-        WHERE t.department_id = ?
-        ORDER BY t.created_at DESC
-    ');
+    $stmt = $pdo->prepare('SELECT t.*, u.username as student_name, u.email as student_email FROM tickets t LEFT JOIN users u ON t.student_id = u.id WHERE t.department_id = ? ORDER BY t.created_at DESC');
     $stmt->execute([$user['department_id']]);
     $tickets = $stmt->fetchAll();
 
@@ -87,6 +84,7 @@ try {
     <style>
         .status-submitted { background-color: #ffc107; color: #000; }
         .status-assigned { background-color: #17a2b8; color: #fff; }
+        .status-under-review { background-color: #6f42c1; color: #fff; }
         .status-approved { background-color: #28a745; color: #fff; }
         .status-rejected { background-color: #dc3545; color: #fff; }
         
@@ -149,7 +147,6 @@ try {
                                             <th>ID</th>
                                             <th>Student</th>
                                             <th>Title</th>
-                                            <th>Category</th>
                                             <th>Description</th>
                                             <th>Status</th>
                                             <th>Created</th>
@@ -163,31 +160,26 @@ try {
                                                 <td>#<?php echo $ticket['id']; ?></td>
                                                 <td><?php echo htmlspecialchars($ticket['student_name']); ?></td>
                                                 <td><?php echo htmlspecialchars($ticket['title']); ?></td>
-                                                <td><?php echo htmlspecialchars($ticket['category']); ?></td>
                                                 <td><?php echo htmlspecialchars(substr($ticket['description'], 0, 100)) . '...'; ?></td>
                                                 <td>
-                                                    <span class="badge status-<?php echo strtolower($ticket['status']); ?>">
-                                                        <?php echo $ticket['status']; ?>
+                                                    <span class="badge status-<?php echo strtolower(str_replace(' ', '-', trim($ticket['status']))); ?>">
+                                                        <?php echo htmlspecialchars($ticket['status']); ?>
                                                     </span>
                                                 </td>
                                                 <td><?php echo date('M j, Y H:i', strtotime($ticket['created_at'])); ?></td>
                                                 <td>
                                                     <?php if ($ticket['pdf_path']): ?>
-                                                        <a href="backend/download_pdf.php?id=<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">
-                                                            Download
-                                                        </a>
+                                                        <a href="backend/download_pdf.php?id=<?php echo $ticket['id']; ?>" class="btn btn-sm btn-outline-primary" target="_blank">Download</a>
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <?php if ($ticket['status'] === 'Assigned'): ?>
-                                                        <button class="btn btn-sm btn-success me-1" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'approve')">
-                                                            Approve
-                                                        </button>
-                                                        <button class="btn btn-sm btn-danger" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'reject')">
-                                                            Reject
-                                                        </button>
+                                                    <?php $statusNorm = strtolower(trim(preg_replace('/\s+/u',' ', $ticket['status']))); ?>
+                                                    <?php if (in_array($statusNorm, ['assigned', 'under review'])): ?>
+                                                        <button class="btn btn-sm btn-success me-1" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'approve')">Approve</button>
+                                                        <button class="btn btn-sm btn-danger me-1" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'reject')">Reject</button>
+                                                        <button class="btn btn-sm btn-info" onclick="showActionModal(<?php echo $ticket['id']; ?>, 'under_review')">Review</button>
                                                     <?php else: ?>
                                                         <span class="text-muted">-</span>
                                                     <?php endif; ?>
@@ -249,6 +241,10 @@ try {
                 title.textContent = 'Reject Ticket';
                 submitBtn.textContent = 'Reject';
                 submitBtn.className = 'btn btn-danger';
+            } else if (action === 'under_review') {
+                title.textContent = 'Mark as Under Review';
+                submitBtn.textContent = 'Mark as Under Review';
+                submitBtn.className = 'btn btn-info';
             }
             
             new bootstrap.Modal(document.getElementById('actionModal')).show();
